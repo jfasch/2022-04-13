@@ -4,7 +4,12 @@
 #include "user.h"
 #include <map>
 
-
-using UserDB = std::map<unsigned int, User>;
+class UserDB
+{
+public:
+    void insert(const User&);
+private:
+    std::map<unsigned int, User> _store;
+};
 
 #endif
