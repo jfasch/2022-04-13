@@ -5,10 +5,13 @@
 
 struct User
 {
-    User(unsigned int id, const std::string& firstname, const std::string& lastname);
+    User(unsigned int id, 
+         const std::string& firstname, const std::string& lastname,
+         const std::string& email);
     unsigned int id;
     std::string firstname;
     std::string lastname;
+    std::string email;
 };
 
 #endif

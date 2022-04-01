@@ -8,6 +8,7 @@ class UserDB
 {
 public:
     void insert(const User&);
+    void write(const std::string& filename);
 private:
     std::map<unsigned int, User> _store;
 };
