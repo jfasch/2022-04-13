@@ -1,6 +1,7 @@
 #include "userdb.h"
 
 #include <iostream>
+#include <fstream>
 #include <cstdint>
 #include <cstring>
 #include <cassert>
@@ -48,9 +49,12 @@ void UserDB::write(const string& filename)
 
         BinaryUser bu;
         bu.id = htonl(u.id);
-        strcpy(bu.firstname, u.firstname.c_str());
-        strcpy(bu.lastname, u.lastname.c_str());
-        strcpy(bu.email, u.email.c_str());
+        strncpy(bu.firstname, u.firstname.c_str(), 10);
+        strncpy(bu.lastname, u.lastname.c_str(), 10);
+        strncpy(bu.email, u.email.c_str(), 20);
+        bu.firstname[9] = '\0';
+        bu.lastname[9] = '\0';
+        bu.email[19] = '\0';
 
         ssize_t nwritten = ::write(fd, &bu, sizeof(bu));
         assert(nwritten == sizeof(bu));
@@ -75,5 +79,37 @@ void UserDB::read(const string& filename)
                bu.lastname,
                bu.email);
         insert(u);
+    }
+}
+
+void UserDB::write_csv(const string& filename)
+{
+    ofstream f(filename);
+    for (const auto& u: *this)
+        f << u.id << ';' << u.firstname << ';' << u.lastname << ';' << u.email << '\n';
+}
+
+void UserDB::read_csv(const string& filename)
+{
+    ifstream f(filename);
+    string line;
+    while (getline(f, line)) {
+        auto lastpos = 0;
+
+        auto pos = line.find(';', lastpos);
+        string id = line.substr(lastpos, pos-lastpos);
+        lastpos = pos+1;
+
+        pos = line.find(';', lastpos);
+        string firstname = line.substr(lastpos, pos-lastpos);
+        lastpos = pos+1;
+
+        pos = line.find(';', lastpos);
+        string lastname = line.substr(lastpos, pos-lastpos);
+        lastpos = pos+1;
+
+        string email = line.substr(lastpos);
+
+        insert(User(std::stoul(id), firstname, lastname, email));
     }
 }
