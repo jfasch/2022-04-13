@@ -2,6 +2,12 @@
 
 #include <iostream>
 
+using std::cout;
+using std::cin;
+using std::endl;
+using std::string;
+using std::stoul;
+
 
 int main(int argc, char** argv)
 {
@@ -11,16 +17,27 @@ int main(int argc, char** argv)
     }
     std::string filename(argv[1]);
 
-    User joerg(1, "Joerg", "Huber", "joerg@home.com");
-    User caro(2, "Caro", "Huber", "caro@home.com");
-    User johanna(3, "Johanna", "Huber", "johanna@home.com");
-    User philipp(4, "Philipp", "Huber", "philipp@home.com");
-
     UserDB db;
-    db.insert(joerg);
-    db.insert(caro);
-    db.insert(johanna);
-    db.insert(philipp);
+
+    while (cin) {
+        string id, fn, ln, email;
+        cout << "ID: ";
+        cin >> id;
+        cout << "Firstname: ";
+        cin >> fn;
+        cout << "Lastname: ";
+        cin >> ln;
+        cout << "Email: ";
+        cin >> email;
+
+        db.insert(User(stoul(id), fn, ln, email));
+
+        string yesno;
+        cout << "another round (y/n): " << endl;
+        cin >> yesno;
+        if (yesno == "n")
+            break;
+    }
 
     db.write(filename);
 

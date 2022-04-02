@@ -31,9 +31,16 @@ void UserDB::insert(const User& u)
     _store.insert(std::make_pair(u.id, u));
 }
 
+const User& UserDB::find(unsigned int id) const
+{
+    store::const_iterator found = _store.find(id);
+    assert(found != _store.cend()); // this is intentional
+    return found->second;
+}
+
 void UserDB::write(const string& filename)
 {
-    int fd = open(filename.c_str(), O_WRONLY);
+    int fd = open(filename.c_str(), O_WRONLY|O_TRUNC);
     assert(fd >= 0);
 
     for (const auto& x: _store) {
@@ -48,6 +55,8 @@ void UserDB::write(const string& filename)
         ssize_t nwritten = ::write(fd, &bu, sizeof(bu));
         assert(nwritten == sizeof(bu));
     }
+
+    close(fd);
 }
 
 void UserDB::read(const string& filename)

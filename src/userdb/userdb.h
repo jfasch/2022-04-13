@@ -27,6 +27,7 @@ public:
 
 public:
     void insert(const User&);
+    const User& find(unsigned int id) const;
     void write(const std::string& filename);
     void read(const std::string& filename);
 
