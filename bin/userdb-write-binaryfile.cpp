@@ -13,8 +13,8 @@ int main(int argc, char** argv)
 
     User joerg(1, "Joerg", "Huber", "joerg@home.com");
     User caro(2, "Caro", "Huber", "caro@home.com");
-    User johanna(1, "Johanna", "Huber", "johanna@home.com");
-    User philipp(1, "Philipp", "Huber", "philipp@home.com");
+    User johanna(3, "Johanna", "Huber", "johanna@home.com");
+    User philipp(4, "Philipp", "Huber", "philipp@home.com");
 
     UserDB db;
     db.insert(joerg);

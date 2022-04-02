@@ -7,10 +7,34 @@
 class UserDB
 {
 public:
+    using store = std::map<unsigned int, User>;
+    struct UserDB_iterator
+    {
+        store::const_iterator _impl;
+
+        UserDB_iterator(store::const_iterator it) : _impl(it) {}
+        bool operator!=(const UserDB_iterator& other) const { 
+            return _impl!=other._impl; 
+        }
+        const User& operator*() const {
+            return _impl->second;
+        }
+        UserDB_iterator& operator++() {
+            ++_impl;
+            return *this;
+        }
+    };
+
+public:
     void insert(const User&);
     void write(const std::string& filename);
+    void read(const std::string& filename);
+
+    UserDB_iterator begin() { return UserDB_iterator(_store.begin()); }
+    UserDB_iterator end() { return UserDB_iterator(_store.end()); }
+
 private:
-    std::map<unsigned int, User> _store;
+    store _store;
 };
 
 #endif
