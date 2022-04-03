@@ -1,0 +1,27 @@
+    static std::string CONTENT = "666;Joerg;Faschingbauer;joerg@home.com\n"
+                                 "42;Caro;Faschingbauer;caro@home.com\n";
+    char tmpfile[] = "test_read_csv-XXXXXX";
+    int fd = mkstemp(tmpfile);
+    ssize_t nwritten = write(fd, CONTENT.c_str(), CONTENT.size());
+    assert((unsigned)nwritten == CONTENT.size());
+    
+    UserDB db;
+    db.read(tmpfile, false);
+
+    User joerg = db.find(666);
+    User caro = db.find(42);
+
+    assert(joerg.id == 666);
+    assert(joerg.firstname == "Joerg");
+    assert(joerg.lastname == "Faschingbauer");
+    assert(joerg.email == "joerg@home.com");
+
+    assert(caro.id == 42);
+    assert(caro.firstname == "Caro");
+    assert(caro.lastname == "Faschingbauer");
+    assert(caro.email == "caro@home.com");
+
+    close(fd);
+    unlink(tmpfile);
+
+    return 0;

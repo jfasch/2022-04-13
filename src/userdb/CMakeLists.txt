@@ -1,6 +1,6 @@
 ADD_LIBRARY(
   userdb 
 
-  user.h user.cpp
+  user.h
   userdb.h userdb.cpp
 )

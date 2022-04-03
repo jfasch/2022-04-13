@@ -1,0 +1,3 @@
+        ofstream f(filename);
+        for (const auto& u: *this)
+            f << u.id << ';' << u.firstname << ';' << u.lastname << ';' << u.email << '\n';

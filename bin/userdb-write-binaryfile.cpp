@@ -46,7 +46,7 @@ int main(int argc, char** argv)
         db.insert(User(stoul(id), fn, ln, email));
 
         string yesno;
-        cout << "another round (y/n): " << endl;
+        cout << "another round (y/n): ";
         cin >> yesno;
         if (yesno == "n")
             break;

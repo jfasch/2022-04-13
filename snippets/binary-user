@@ -1,0 +1,8 @@
+struct BinaryUser
+{
+    uint32_t id;
+    char firstname[10];
+    char lastname[10];
+    char email[20];
+};
+

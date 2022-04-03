@@ -1,0 +1,9 @@
+
+#include <unistd.h>
+#include <stdlib.h>
+
+    char tmpname[] = "test-funny-overflow-file-XXXXXX";
+    int fd = mkstemp(tmpname);
+
+    close(fd);
+    unlink(tmpname);

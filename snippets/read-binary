@@ -1,0 +1,17 @@
+    int fd = open(filename.c_str(), O_RDONLY);
+    assert(fd >= 0);
+
+    for (;;) {
+        BinaryUser bu;
+        ssize_t nread = ::read(fd, &bu, sizeof(bu));
+        if (nread == 0)
+            break;
+        assert(nread == sizeof(bu));
+        User u(ntohl(bu.id),
+               bu.firstname,
+               bu.lastname,
+               bu.email);
+        insert(u);
+    }
+
+    close(fd);

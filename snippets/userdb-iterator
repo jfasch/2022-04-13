@@ -1,0 +1,16 @@
+    struct UserDB_iterator
+    {
+        store::const_iterator _impl;
+
+        UserDB_iterator(store::const_iterator it) : _impl(it) {}
+        bool operator!=(const UserDB_iterator& other) const { 
+            return _impl!=other._impl; 
+        }
+        const User& operator*() const {
+            return _impl->second;
+        }
+        UserDB_iterator& operator++() {
+            ++_impl;
+            return *this;
+        }
+    };

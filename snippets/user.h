@@ -7,7 +7,13 @@ struct User
 {
     User(unsigned int id, 
          const std::string& firstname, const std::string& lastname,
-         const std::string& email);
+         const std::string& email)
+    : id(id),
+      firstname(firstname),
+      lastname(lastname),
+      email(email)
+    {}
+
     unsigned int id;
     std::string firstname;
     std::string lastname;

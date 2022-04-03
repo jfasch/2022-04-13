@@ -1,0 +1,15 @@
+#include <userdb/userdb.h>
+
+
+int main(int argc, char** argv)
+{
+    UserDB db;
+
+    User joerg(666, "Joerg", "Huber", "jfasch@home.com");
+    User caro(42, "Caro", "Huber", "caro@home.com");
+
+    db.insert(joerg);
+    db.insert(caro);
+
+    return 0;
+}

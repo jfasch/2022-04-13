@@ -1,0 +1,19 @@
+    while (cin) {
+        string id, fn, ln, email;
+        cout << "ID: ";
+        cin >> id;
+        cout << "Firstname: ";
+        cin >> fn;
+        cout << "Lastname: ";
+        cin >> ln;
+        cout << "Email: ";
+        cin >> email;
+
+        db.insert(User(stoul(id), fn, ln, email));
+
+        string yesno;
+        cout << "another round (y/n): ";
+        cin >> yesno;
+        if (yesno == "n")
+            break;
+    }

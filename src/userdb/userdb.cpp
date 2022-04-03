@@ -88,6 +88,8 @@ void UserDB::read(const string& filename, bool binary)
                    bu.email);
             insert(u);
         }
+
+        close(fd);
     }
     else {
         ifstream f(filename);

@@ -1,0 +1,2 @@
+    UserDB_iterator begin() { return UserDB_iterator(_store.begin()); }
+    UserDB_iterator end() { return UserDB_iterator(_store.end()); }

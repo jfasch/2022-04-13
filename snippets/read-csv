@@ -1,0 +1,21 @@
+        ifstream f(filename);
+        string line;
+        while (getline(f, line)) {
+            int lastpos = 0;
+
+            auto pos = line.find(';', lastpos);
+            string id = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
+
+            pos = line.find(';', lastpos);
+            string firstname = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
+
+            pos = line.find(';', lastpos);
+            string lastname = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
+
+            string email = line.substr(lastpos);
+
+            insert(User(std::stoul(id), firstname, lastname, email));
+        }
