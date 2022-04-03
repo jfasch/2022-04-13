@@ -4,6 +4,7 @@
 
 using std::cout;
 using std::cin;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::stoul;
@@ -11,11 +12,23 @@ using std::stoul;
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " FILENAME" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " TYPE FILENAME" << std::endl;
+        std::cerr << "   TYPE ... \"binary\" or \"text\"" << std::endl;
         return 1;
     }
-    std::string filename(argv[1]);
+    std::string type(argv[1]);
+    std::string filename(argv[2]);
+
+    bool binary;
+    if (type == "binary")
+        binary = true;
+    else if (type == "text")
+        binary = false;
+    else {
+        std::cerr << "Bad type: " << type << std::endl;
+        return 1;
+    }
 
     UserDB db;
 
@@ -39,7 +52,7 @@ int main(int argc, char** argv)
             break;
     }
 
-    db.write(filename);
+    db.write(filename, binary);
 
     return 0;
 }

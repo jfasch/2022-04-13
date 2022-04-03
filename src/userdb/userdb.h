@@ -28,10 +28,8 @@ public:
 public:
     void insert(const User&);
     const User& find(unsigned int id) const;
-    void write(const std::string& filename);
-    void read(const std::string& filename);
-    void write_csv(const std::string& filename);
-    void read_csv(const std::string& filename);
+    void write(const std::string& filename, bool binary=true);
+    void read(const std::string& filename, bool binary=true);
 
     UserDB_iterator begin() { return UserDB_iterator(_store.begin()); }
     UserDB_iterator end() { return UserDB_iterator(_store.end()); }

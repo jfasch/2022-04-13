@@ -39,77 +39,77 @@ const User& UserDB::find(unsigned int id) const
     return found->second;
 }
 
-void UserDB::write(const string& filename)
+void UserDB::write(const string& filename, bool binary)
 {
-    int fd = open(filename.c_str(), O_WRONLY|O_TRUNC);
-    assert(fd >= 0);
+    if (binary) {
+        int fd = open(filename.c_str(), O_WRONLY|O_TRUNC);
+        assert(fd >= 0);
 
-    for (const auto& x: _store) {
-        const User& u = x.second;
+        for (const auto& x: _store) {
+            const User& u = x.second;
 
-        BinaryUser bu;
-        bu.id = htonl(u.id);
-        strncpy(bu.firstname, u.firstname.c_str(), 10);
-        strncpy(bu.lastname, u.lastname.c_str(), 10);
-        strncpy(bu.email, u.email.c_str(), 20);
-        bu.firstname[9] = '\0';
-        bu.lastname[9] = '\0';
-        bu.email[19] = '\0';
+            BinaryUser bu;
+            bu.id = htonl(u.id);
+            strncpy(bu.firstname, u.firstname.c_str(), 10);
+            strncpy(bu.lastname, u.lastname.c_str(), 10);
+            strncpy(bu.email, u.email.c_str(), 20);
+            bu.firstname[9] = '\0';
+            bu.lastname[9] = '\0';
+            bu.email[19] = '\0';
 
-        ssize_t nwritten = ::write(fd, &bu, sizeof(bu));
-        assert(nwritten == sizeof(bu));
+            ssize_t nwritten = ::write(fd, &bu, sizeof(bu));
+            assert(nwritten == sizeof(bu));
+        }
+
+        close(fd);
     }
-
-    close(fd);
-}
-
-void UserDB::read(const string& filename)
-{
-    int fd = open(filename.c_str(), O_RDONLY);
-    assert(fd >= 0);
-
-    for (;;) {
-        BinaryUser bu;
-        ssize_t nread = ::read(fd, &bu, sizeof(bu));
-        if (nread == 0)
-            break;
-        assert(nread == sizeof(bu));
-        User u(ntohl(bu.id),
-               bu.firstname,
-               bu.lastname,
-               bu.email);
-        insert(u);
+    else {
+        ofstream f(filename);
+        for (const auto& u: *this)
+            f << u.id << ';' << u.firstname << ';' << u.lastname << ';' << u.email << '\n';
     }
 }
 
-void UserDB::write_csv(const string& filename)
+void UserDB::read(const string& filename, bool binary)
 {
-    ofstream f(filename);
-    for (const auto& u: *this)
-        f << u.id << ';' << u.firstname << ';' << u.lastname << ';' << u.email << '\n';
-}
+    if (binary) {
+        int fd = open(filename.c_str(), O_RDONLY);
+        assert(fd >= 0);
 
-void UserDB::read_csv(const string& filename)
-{
-    ifstream f(filename);
-    string line;
-    while (getline(f, line)) {
-        auto lastpos = 0;
+        for (;;) {
+            BinaryUser bu;
+            ssize_t nread = ::read(fd, &bu, sizeof(bu));
+            if (nread == 0)
+                break;
+            assert(nread == sizeof(bu));
+            User u(ntohl(bu.id),
+                   bu.firstname,
+                   bu.lastname,
+                   bu.email);
+            insert(u);
+        }
+    }
+    else {
+        ifstream f(filename);
+        string line;
+        while (getline(f, line)) {
+            int lastpos = 0;
 
-        auto pos = line.find(';', lastpos);
-        string id = line.substr(lastpos, pos-lastpos);
-        lastpos = pos+1;
+            auto pos = line.find(';', lastpos);
+            string id = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
 
-        pos = line.find(';', lastpos);
-        string firstname = line.substr(lastpos, pos-lastpos);
-        lastpos = pos+1;
+            pos = line.find(';', lastpos);
+            string firstname = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
 
-        pos = line.find(';', lastpos);
-        string lastname = line.substr(lastpos, pos-lastpos);
-        lastpos = pos+1;
+            pos = line.find(';', lastpos);
+            string lastname = line.substr(lastpos, pos-lastpos);
+            lastpos = pos+1;
 
-        string email = line.substr(lastpos);
+            string email = line.substr(lastpos);
 
-        insert(User(std::stoul(id), firstname, lastname, email));
+            insert(User(std::stoul(id), firstname, lastname, email));
+        }
     }
 }

@@ -21,7 +21,7 @@ int test_write_csv()
 
     char filename[] = "test-csv-XXXXXX";
     int fd = mkstemp(filename);
-    db.write_csv(filename);
+    db.write(filename, false);
     
     struct stat s;
     int error = stat(filename, &s);
@@ -51,7 +51,7 @@ int test_read_csv()
     assert((unsigned)nwritten == CONTENT.size());
     
     UserDB db;
-    db.read_csv(tmpfile);
+    db.read(tmpfile, false);
 
     User jfasch = db.find(666);
     User caro = db.find(42);
