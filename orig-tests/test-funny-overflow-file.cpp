@@ -1,7 +1,4 @@
 #include <userdb/userdb.h>
-
-#include <gtest/gtest.h>
-
 #include <cassert>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,7 +8,7 @@ using std::cerr;
 using std::endl;
 
 
-TEST(BinaryFormatSuite, FunnyOverflow)
+int main()
 {
     char tmpname[] = "test-funny-overflow-file-XXXXXX";
     int fd = mkstemp(tmpname);
@@ -26,11 +23,14 @@ TEST(BinaryFormatSuite, FunnyOverflow)
     db.read(tmpname);
     User u = db.find(666);
 
-    ASSERT_EQ(u.id, 666);
-    ASSERT_EQ(u.firstname, "Joerg");
-    ASSERT_EQ(u.lastname, "Faschingb");  // sigh, documenting a bug as a feature
-    ASSERT_EQ(u.email, "jfasch@home.com");
+    assert(u.id == 666);
+    assert(u.firstname == "Joerg");
+    assert(u.lastname == "Faschingb");  // sigh, documenting a bug as
+                                        // a feature
+    assert(u.email == "jfasch@home.com");
 
     close(fd);
     unlink(tmpname);
+
+    return 0;
 }

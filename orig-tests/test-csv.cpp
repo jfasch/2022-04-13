@@ -1,9 +1,4 @@
-#include "tempfile.h"
-
 #include <userdb/userdb.h>
-
-#include <gtest/gtest.h>
-
 #include <cassert>
 
 #include <sys/types.h>
@@ -37,41 +32,65 @@ static std::string read_file(const std::string& filename)
     return std::string(buffer, s.st_size);
 }
 
-class CSVFormatSuite : public TempfileFixture {};
 
-TEST_F(CSVFormatSuite, Write)
+int test_write_csv()
 {
     static std::string EXPECTED_CONTENT = "666;Joerg;Faschingbauer;jfasch@home.com\n";
 
+    char filename[] = "test-csv-XXXXXX";
+    int fd = mkstemp(filename);
+
     UserDB db;
     db.insert(User(666, "Joerg", "Faschingbauer", "jfasch@home.com"));
-    db.write(tempname, false);
+    db.write(filename, false);
     
-    std::string content = read_file(tempname);
-    ASSERT_EQ(content, EXPECTED_CONTENT);
+    std::string content = read_file(filename);
+    assert(content == EXPECTED_CONTENT);
+
+    close(fd);
+    unlink(filename);
+
+    return 0;
 }
 
-TEST_F(CSVFormatSuite, Read)
+int test_read_csv()
 {
     static std::string CONTENT = "666;Joerg;Faschingbauer;joerg@home.com\n"
                                  "42;Caro;Faschingbauer;caro@home.com\n";
-    ssize_t nwritten = write(tempfd, CONTENT.c_str(), CONTENT.size());
-    ASSERT_EQ((unsigned)nwritten, CONTENT.size());
+    char tmpfile[] = "test_read_csv-XXXXXX";
+    int fd = mkstemp(tmpfile);
+    ssize_t nwritten = write(fd, CONTENT.c_str(), CONTENT.size());
+    assert((unsigned)nwritten == CONTENT.size());
     
     UserDB db;
-    db.read(tempname, false);
+    db.read(tmpfile, false);
 
     User joerg = db.find(666);
     User caro = db.find(42);
 
-    ASSERT_EQ(joerg.id, 666);
-    ASSERT_EQ(joerg.firstname, "Joerg");
-    ASSERT_EQ(joerg.lastname, "Faschingbauer");
-    ASSERT_EQ(joerg.email, "joerg@home.com");
+    assert(joerg.id == 666);
+    assert(joerg.firstname == "Joerg");
+    assert(joerg.lastname == "Faschingbauer");
+    assert(joerg.email == "joerg@home.com");
 
-    ASSERT_EQ(caro.id, 42);
-    ASSERT_EQ(caro.firstname, "Caro");
-    ASSERT_EQ(caro.lastname, "Faschingbauer");
-    ASSERT_EQ(caro.email, "caro@home.com");
+    assert(caro.id == 42);
+    assert(caro.firstname == "Caro");
+    assert(caro.lastname == "Faschingbauer");
+    assert(caro.email == "caro@home.com");
+
+    close(fd);
+    unlink(tmpfile);
+
+    return 0;
 }
 
+int main()
+{
+    int result = test_write_csv();
+    if (result != 0)
+        return result;
+    result = test_read_csv();
+    if (result != 0)
+        return result;
+    return 0;
+}
